@@ -37,7 +37,7 @@ class MovieController {
             $movieTitle = $_POST['movie_title'];
             $prompt = "Write a short, fun and friendly movie review for the film titled '{$movieTitle}'.";
 
-            // Load API key from environment
+            
             $apiKey = $_ENV['GEMINI_API_KEY'] ?? getenv('GEMINI_API_KEY');
 
             if (!$apiKey) {
@@ -47,7 +47,7 @@ class MovieController {
                 return;
             }
 
-            // ✅ Corrected Gemini endpoint
+            
             $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}";
 
             $payload = [
