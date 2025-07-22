@@ -4,46 +4,43 @@
     <?php exit; ?>
 <?php endif; ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title><?= htmlspecialchars($movie['Title'] ?? 'Unknown Title') ?></title>
-</head>
-<body>
-    <h1><?= htmlspecialchars($movie['Title'] ?? 'Unknown Title') ?> (<?= htmlspecialchars($movie['Year'] ?? 'N/A') ?>)</h1>
-    <img src="<?= htmlspecialchars($movie['Poster'] ?? '') ?>" alt="Poster" width="200"><br>
+<?php require __DIR__ . '/../templates/header.php'; ?>
 
-    <strong>Genre:</strong> <?= htmlspecialchars($movie['Genre'] ?? 'N/A') ?><br>
-    <strong>Plot:</strong> <?= htmlspecialchars($movie['Plot'] ?? 'N/A') ?><br><br>
+<h1><?= htmlspecialchars($movie['Title'] ?? 'Unknown Title') ?> (<?= htmlspecialchars($movie['Year'] ?? 'N/A') ?>)</h1>
 
-    <form method="POST" action="index.php?action=rate">
-        <input type="hidden" name="movie_id" value="<?= htmlspecialchars($movie['imdbID'] ?? '') ?>">
-        <input type="hidden" name="movie_title" value="<?= htmlspecialchars($movie['Title'] ?? '') ?>">
-        <label>Rate this movie:</label>
-        <select name="rating">
-            <?php for ($i = 1; $i <= 5; $i++): ?>
-                <option value="<?= $i ?>"><?= $i ?>/5</option>
-            <?php endfor; ?>
-        </select>
-        <button type="submit">Submit Rating</button>
-    </form>
+<img src="<?= htmlspecialchars($movie['Poster'] ?? '') ?>" alt="Poster" class="img-thumbnail mb-3" style="max-width:200px;">
 
-    <?php
-    $avg = \App\Models\Rating::getAverage($movie['imdbID'] ?? '');
-    $count = \App\Models\Rating::getCount($movie['imdbID'] ?? '');
-    ?>
-    <p><strong>Average Rating:</strong> <?= $avg ?>/5 (<?= $count ?> votes)</p>
+<p><strong>Genre:</strong> <?= htmlspecialchars($movie['Genre'] ?? 'N/A') ?></p>
+<p><strong>Plot:</strong> <?= htmlspecialchars($movie['Plot'] ?? 'N/A') ?></p>
 
-    <form method="POST" action="index.php?action=review">
-        <input type="hidden" name="movie_title" value="<?= htmlspecialchars($movie['Title'] ?? '') ?>">
-        <button type="submit">Get AI Review</button>
-    </form>
+<form method="POST" action="index.php?action=rate" class="mb-4">
+    <input type="hidden" name="movie_id" value="<?= htmlspecialchars($movie['imdbID'] ?? '') ?>">
+    <input type="hidden" name="movie_title" value="<?= htmlspecialchars($movie['Title'] ?? '') ?>">
+    <label for="rating" class="form-label">Rate this movie:</label>
+    <select name="rating" id="rating" class="form-select" style="width:100px;">
+        <?php for ($i = 1; $i <= 5; $i++): ?>
+            <option value="<?= $i ?>"><?= $i ?>/5</option>
+        <?php endfor; ?>
+    </select>
+    <button type="submit" class="btn btn-primary mt-2">Submit Rating</button>
+</form>
 
-    <?php if (!empty($review)): ?>
-        <h3>AI Review:</h3>
-        <p><?= nl2br(htmlspecialchars($review)) ?></p>
-    <?php endif; ?>
+<?php
+$avg = \App\Models\Rating::getAverage($movie['imdbID'] ?? '');
+$count = \App\Models\Rating::getCount($movie['imdbID'] ?? '');
+?>
+<p><strong>Average Rating:</strong> <?= $avg ?>/5 (<?= $count ?> votes)</p>
 
-    <br><a href="index.php">← Back to Search</a>
-</body>
-</html>
+<form method="POST" action="index.php?action=review" class="mb-3">
+    <input type="hidden" name="movie_title" value="<?= htmlspecialchars($movie['Title'] ?? '') ?>">
+    <button type="submit" class="btn btn-info">Get AI Review</button>
+</form>
+
+<?php if (!empty($review)): ?>
+    <h3>AI Review:</h3>
+    <p><?= nl2br(htmlspecialchars($review)) ?></p>
+<?php endif; ?>
+
+<a href="index.php" class="btn btn-secondary mt-3">← Back to Search</a>
+
+<?php require __DIR__ . '/../templates/footer.php'; ?>
