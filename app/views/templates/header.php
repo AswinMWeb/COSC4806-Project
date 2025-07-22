@@ -1,3 +1,4 @@
+<?php  ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,11 +21,38 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarPublic">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="/Login">Login</a></li>
-        
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+
+        <?php if (isset($_SESSION['user'])): ?>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">Welcome, <?= htmlspecialchars($_SESSION['user']['username']) ?></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="?action=logout">Logout</a>
+          </li>
+
+        <?php elseif (isset($_SESSION['guest'])): ?>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#">Guest</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="?action=logout">Logout</a>
+          </li>
+
+        <?php else: ?>
+          <li class="nav-item">
+            <a class="nav-link" href="?action=login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="?action=register">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="?action=guest">Continue as Guest</a>
+          </li>
+        <?php endif; ?>
       </ul>
     </div>
   </div>
 </nav>
-
