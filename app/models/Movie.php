@@ -1,24 +1,21 @@
 <?php
-class Movie extends Model {
-    public function search($title) {
-        $url = "http://www.omdbapi.com/?apikey=" . OMDB_API_KEY . "&s=" . urlencode($title);
-        echo $url;
 
-        return json_decode(file_get_contents($url), true);
-    }
+namespace App\Models;
 
-    public function getOrCreateByImdb($imdbID) {
-        $stmt = $this->db->prepare("SELECT * FROM movies WHERE imdb_id = ?");
-        $stmt->execute([$imdbID]);
-        $movie = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($movie) return $movie;
 
-        $url = "http://www.omdbapi.com/?apikey=" . OMDB_API_KEY . "&i=$imdbID&plot=full";
-        $data = json_decode(file_get_contents($url), true);
+class Movie {
+    public static function fetchByTitle($title) {
+        $apiKey = $_ENV['OMDB_API_KEY'];
+        $url = "https://www.omdbapi.com/?apikey=28f55fa4&t=" . urlencode($title);
 
-        $stmt = $this->db->prepare("INSERT INTO movies (imdb_id, title, year, poster, data) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$imdbID, $data['Title'], $data['Year'], $data['Poster'], json_encode($data)]);
 
-        return $this->getOrCreateByImdb($imdbID);
+        $response = file_get_contents($url);
+        $data = json_decode($response, true);
+
+        if ($data && $data['Response'] === "True") {
+            return $data;
+        } else {
+            return null;
+        }
     }
 }

@@ -1,13 +1,40 @@
 <?php
-class Rating extends Model {
-    public function add($movieId, $score) {
-        $stmt = $this->db->prepare("INSERT INTO ratings (movie_id, rating) VALUES (?, ?)");
-        $stmt->execute([$movieId, $score]);
+namespace App\Models;
+
+use App\Core\Database;
+use PDO;
+
+class Rating {
+    public static function add($movieId, $rating) {
+        $db = Database::connect();
+
+        $stmt = $db->prepare("INSERT INTO ratings (movie_id, rating) VALUES (?, ?)");
+        return $stmt->execute([$movieId, $rating]);
     }
 
-    public function average($movieId) {
-        $stmt = $this->db->prepare("SELECT AVG(rating) as avg FROM ratings WHERE movie_id = ?");
+    public static function getAverage($movieId) {
+        $db = Database::connect();
+
+        $stmt = $db->prepare("SELECT AVG(rating) as avg_rating FROM ratings WHERE movie_id = ?");
         $stmt->execute([$movieId]);
-        return round($stmt->fetch()['avg'] ?? 0, 1);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result && $result['avg_rating'] !== null) {
+            return round($result['avg_rating'], 2);
+        } else {
+            return 0;
+        }
+    }
+
+
+    public static function getCount($movieId) {
+        $db = Database::connect();
+
+        $stmt = $db->prepare("SELECT COUNT(*) as total FROM ratings WHERE movie_id = ?");
+        $stmt->execute([$movieId]);
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
     }
 }
